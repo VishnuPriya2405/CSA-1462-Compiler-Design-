@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define MAX_TOKEN_LENGTH 100
+typedef enum {KEYWORD, CONSTANT, IDENTIFIER, STRING, NUMBER, OPERATOR, PUNCTUATION, UNKNOWN} TokenType;
+int isDelimiter(char ch) { return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'); }
+int isOperator(char ch) { return (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=' || ch == '<' || ch == '>' || ch == '&' || ch == '|'); }
+int isPunctuation(char ch) { return (ch == ',' || ch == ';' || ch == ':' || ch == '(' || ch == ')' || ch == '{' || ch == '}' || ch == '[' || ch == ']'); }
+void tokenize(char* input) 
+{
+    int i = 0, len = strlen(input);
+    while (i < len) 
+	{
+        if (isDelimiter(input[i])) 
+		{ 
+		   ++i; continue; 
+		}
+        if (isalpha(input[i]) || input[i] == '_') 
+		{
+            int j = 0;
+            char token[MAX_TOKEN_LENGTH];
+            while (isalnum(input[i]) || input[i] == '_') token[j++] = input[i++];
+            token[j] = '\0';
+            if (strcmp(token, "if") == 0 || strcmp(token, "else") == 0 || strcmp(token, "while") == 0 || strcmp(token, "for") == 0 ||
+                strcmp(token, "int") == 0 || strcmp(token, "float") == 0 || strcmp(token, "return") == 0) printf("Keyword: %s\n", token);
+            else printf("Identifier: %s\n", token);
+            continue;
+        }
+        if (isdigit(input[i])) 
+		{
+            int j = 0;
+            char token[MAX_TOKEN_LENGTH];
+            while (isdigit(input[i])) token[j++] = input[i++];
+            token[j] = '\0';
+            printf("Number: %s\n", token);
+            continue;
+        }
+        if (input[i] == '"') 
+		{
+            int j = 0;
+            char token[MAX_TOKEN_LENGTH];
+            token[j++] = input[i++];
+            while (input[i] != '"' && input[i] != '\0') token[j++] = input[i++];
+            if (input[i] == '"') token[j++] = input[i++];
+            token[j] = '\0';
+            printf("String: %s\n", token);
+            continue;
+        }
+        if (isOperator(input[i])) 
+		{ 
+		printf("Operator: %c\n", input[i++]); continue; 
+		}
+        if (isPunctuation(input[i])) 
+		{ 
+		printf("Punctuation: %c\n", input[i++]); continue; 
+		}
+        printf("Unknown token: %c\n", input[i++]);
+    }
+}
+int main() 
+{
+    char input[1000];
+    printf("Enter input string: ");
+    fgets(input, sizeof(input), stdin);
+    tokenize(input);
+    return 0;
+}
